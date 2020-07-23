@@ -9,8 +9,9 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-find_package(Eigen3 REQUIRED)
-include_directories(${Eigen3_INLCUDE_DIRS})
+include_directories("/usr/include/eigen3")
+#find_package(Eigen3 REQUIRED)
+#include_directories(${Eigen3_INCLUDE_DIRS})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 add_subdirectory(src)

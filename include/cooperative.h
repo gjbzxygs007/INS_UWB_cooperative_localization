@@ -12,29 +12,29 @@
 
 #include <Eigen3/Core>
 
-namespace cl {
-    template <int dim>
-    class Cooperative {
-    private:
-
-
-
-    public:
-        virtual Set
-        virtual Update
-
-
-
-    };
-
-    class CooperativeDmv : public Cooperative {
-    private:
-
-    public:
-
-
-    };
-
-
-}
+//namespace cl {
+//    template <int dim>
+//    class Cooperative {
+//    private:
+//
+//
+//
+//    public:
+//        virtual Set
+//        virtual Update
+//
+//
+//
+//    };
+//
+//    class CooperativeDmv : public Cooperative {
+//    private:
+//
+//    public:
+//
+//
+//    };
+//
+//
+//}
 #endif //COOPERATIVE_COOPERATIVE_H
