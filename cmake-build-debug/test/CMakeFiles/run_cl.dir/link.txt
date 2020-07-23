@@ -1,0 +1,1 @@
+g++  -std=c++11 -O3 -DNDEBUG   CMakeFiles/run_cl.dir/run_cl.cpp.o  -o ../../bin/run_cl 
