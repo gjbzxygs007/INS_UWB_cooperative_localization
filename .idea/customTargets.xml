@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CLionExternalBuildManager">
+    <target id="5a693926-3d2f-4370-bf71-d20e34668205" name="looselycl" projectName="Cooperative">
+      <configuration id="7f902a17-5d8a-48f0-ab09-161982ff701b" name="looselycl" toolchainName="Default">
+        <build type="TOOL">
+          <tool actionId="Tool_External Tools_build_with_make" />
+        </build>
+      </configuration>
+    </target>
+  </component>
+</project>

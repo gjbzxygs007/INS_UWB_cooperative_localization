@@ -114,6 +114,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named looselycl
+
+# Build rule for target.
+looselycl: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 looselycl
+.PHONY : looselycl
+
+# fast build rule for target.
+looselycl/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/build
+.PHONY : looselycl/fast
+
+#=============================================================================
 # Target rules for targets named run_cl
 
 # Build rule for target.
@@ -134,6 +147,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... looselycl"
 	@echo "... run_cl"
 .PHONY : help
 

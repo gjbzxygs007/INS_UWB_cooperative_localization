@@ -113,6 +113,48 @@ depend:
 	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+src/CMakeFiles/looselycl.dir/rule:
+	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/looselycl.dir/rule
+.PHONY : src/CMakeFiles/looselycl.dir/rule
+
+# Convenience name for target.
+looselycl: src/CMakeFiles/looselycl.dir/rule
+
+.PHONY : looselycl
+
+# fast build rule for target.
+looselycl/fast:
+	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/build
+.PHONY : looselycl/fast
+
+measurement_model.o: measurement_model.cpp.o
+
+.PHONY : measurement_model.o
+
+# target to build an object file
+measurement_model.cpp.o:
+	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/measurement_model.cpp.o
+.PHONY : measurement_model.cpp.o
+
+measurement_model.i: measurement_model.cpp.i
+
+.PHONY : measurement_model.i
+
+# target to preprocess a source file
+measurement_model.cpp.i:
+	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/measurement_model.cpp.i
+.PHONY : measurement_model.cpp.i
+
+measurement_model.s: measurement_model.cpp.s
+
+.PHONY : measurement_model.s
+
+# target to generate assembly for a file
+measurement_model.cpp.s:
+	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/measurement_model.cpp.s
+.PHONY : measurement_model.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -120,7 +162,11 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... looselycl"
 	@echo "... edit_cache"
+	@echo "... measurement_model.o"
+	@echo "... measurement_model.i"
+	@echo "... measurement_model.s"
 .PHONY : help
 
 
