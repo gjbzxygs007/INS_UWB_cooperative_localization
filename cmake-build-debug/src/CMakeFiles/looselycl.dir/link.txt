@@ -1,0 +1,1 @@
+g++ -fPIC -std=c++11 -O3 -DNDEBUG  -shared -Wl,-soname,liblooselycl.so -o ../../lib/liblooselycl.so CMakeFiles/looselycl.dir/measurement_model.cpp.o 
