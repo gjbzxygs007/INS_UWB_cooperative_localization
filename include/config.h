@@ -5,11 +5,13 @@
 #ifndef COOPERATIVE_CONFIG_H
 #define COOPERATIVE_CONFIG_H
 
+#include "common_include.h"
+
 namespace cl {
     class Config {
     private:
-        cv::FileStorage file_;
-        static Config * config_;
+        cv::FileStorage _file;
+        static Config * _config;
 
         Config()=default;
         Config(const Config & obj)=delete;
@@ -20,7 +22,7 @@ namespace cl {
 
         static void SetParameterFile(const string & filename);
         template<typename T>
-        static T get(const string & key) {return T(Config::config_->file_[key]); }
+        static T get(const string & key) {return T(Config::_config->_file[key]); }
     };
 
 }

@@ -6,5 +6,5 @@ CXX_FLAGS = -std=c++11 -O3 -DNDEBUG -fPIC
 
 CXX_DEFINES = -Dlooselycl_EXPORTS
 
-CXX_INCLUDES = -I/usr/include/eigen3 -I/home/ubuntu-jianan/Projects/Cooperative/include 
+CXX_INCLUDES = -I/usr/include/eigen3 -I/home/ubuntu-jianan/Projects/Cooperative/include -isystem /usr/local/include/opencv 
 

@@ -116,12 +116,12 @@ test/clean: test/CMakeFiles/run_cl.dir/clean
 src/CMakeFiles/looselycl.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target looselycl"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles --progress-num=1,2,3 "Built target looselycl"
 .PHONY : src/CMakeFiles/looselycl.dir/all
 
 # Build rule for subdir invocation for target.
 src/CMakeFiles/looselycl.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/looselycl.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles 0
 .PHONY : src/CMakeFiles/looselycl.dir/rule
@@ -140,15 +140,15 @@ src/CMakeFiles/looselycl.dir/clean:
 # Target rules for target test/CMakeFiles/run_cl.dir
 
 # All Build rule for target.
-test/CMakeFiles/run_cl.dir/all:
+test/CMakeFiles/run_cl.dir/all: src/CMakeFiles/looselycl.dir/all
 	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/run_cl.dir/build.make test/CMakeFiles/run_cl.dir/depend
 	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/run_cl.dir/build.make test/CMakeFiles/run_cl.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles --progress-num=3,4 "Built target run_cl"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles --progress-num=4,5 "Built target run_cl"
 .PHONY : test/CMakeFiles/run_cl.dir/all
 
 # Build rule for subdir invocation for target.
 test/CMakeFiles/run_cl.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/run_cl.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug/CMakeFiles 0
 .PHONY : test/CMakeFiles/run_cl.dir/rule

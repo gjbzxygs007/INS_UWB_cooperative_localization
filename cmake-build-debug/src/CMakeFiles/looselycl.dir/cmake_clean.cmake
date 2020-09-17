@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "../../lib/liblooselycl.pdb"
   "../../lib/liblooselycl.so"
+  "CMakeFiles/looselycl.dir/config.cpp.o"
   "CMakeFiles/looselycl.dir/measurement_model.cpp.o"
 )
 

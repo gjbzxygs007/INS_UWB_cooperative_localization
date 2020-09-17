@@ -5,8 +5,8 @@
 
 namespace cl {
     enum StateType {
-        threedim,
-        ninedim,
+        THREE_DIM,
+        NINE_DIM,
     };
 
     template <int D>

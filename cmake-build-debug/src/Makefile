@@ -128,6 +128,33 @@ looselycl/fast:
 	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/build
 .PHONY : looselycl/fast
 
+config.o: config.cpp.o
+
+.PHONY : config.o
+
+# target to build an object file
+config.cpp.o:
+	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/config.cpp.o
+.PHONY : config.cpp.o
+
+config.i: config.cpp.i
+
+.PHONY : config.i
+
+# target to preprocess a source file
+config.cpp.i:
+	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/config.cpp.i
+.PHONY : config.cpp.i
+
+config.s: config.cpp.s
+
+.PHONY : config.s
+
+# target to generate assembly for a file
+config.cpp.s:
+	cd /home/ubuntu-jianan/Projects/Cooperative/cmake-build-debug && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/config.cpp.s
+.PHONY : config.cpp.s
+
 measurement_model.o: measurement_model.cpp.o
 
 .PHONY : measurement_model.o
@@ -164,6 +191,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... looselycl"
 	@echo "... edit_cache"
+	@echo "... config.o"
+	@echo "... config.i"
+	@echo "... config.s"
 	@echo "... measurement_model.o"
 	@echo "... measurement_model.i"
 	@echo "... measurement_model.s"

@@ -16,47 +16,49 @@ namespace coop {
     class ImuPlusRange {
     public:
         typedef RelMeasurement<1> MeasurementClass;
-        typedef StateVector<9> StateClass;
+        typedef StateVector<9>::State State;
         typedef MeasurementClass::Measurement Measurement;
         typedef Eigen::Matrix<double, 1, 9, Eigen::RowMajor> Jacobian;
+        typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> MeasCov;
 
         // Constructor and destructors
-        ImuPlusRange() : _meas(nullptr) {}
-
-        /* Input:
-         *  s_i    the state of agent i
-         *  s_j    the state of agent j
-         *  m      relative range measurement
-         */
-        ImuPlusRange(Ptr & m);
-        virtual ~ImuPlusRange() {}
+        ImuPlusRange();
+        ~ImuPlusRange() {}
 //
     // Accessors
         MeasurementClass::Ptr getMeasurement() {return _meas;}
         Measurement getResidual() {return _residual;}
+        MeasCov getMeasurementCov() {return _cov_meas;}
         Jacobian getJacobiani() {return _jacobian_i;}
         Jacobian getJacobianj() {return _jacobian_j;}
-        StateClass::Ptr getStatei() {return _state_i;}
-        StateClass::Ptr getStatej() {return _state_j;}
+        State getStatei() {return _state_i;}
+        State getStatej() {return _state_j;}
 
         // update the relative measurement
         void updateMeasurement(Measurement & m);
 
         // update the local state of each agent
-        void updateState(StateClass::Ptr & s1, StateClass::Ptr & s2);
+        void updateState(State & s1, State & s2);
 
         // Update the residual once a new relative measurement is detected
         void updateResidual();
 
         // Update the measurement Jacobian matrix
-        void updateJacobian(StateClass::Ptr & s1, StateClass::Ptr & s2);
+        void updateJacobian();
+
     private:
+        MeasType _type;
+        StateType _type_s;
         MeasurementClass::Ptr _meas;
         Measurement _residual;
+        MeasCov _cov_meas;
         Jacobian _jacobian_i;
         Jacobian _jacobian_j;
-        StateClass::Ptr _state_i;
-        StateClass::Ptr _state_j;
+        State _state_i;
+        State _state_j;
+
+        // The relative ranging model
+        double rangingModel();
     };
 
     // 3 dimensional state(x, y, theta) and relative pose measurement

@@ -5,33 +5,32 @@
 #include "config.h"
 #include <mutex>
 
-
 mutex mu;
 namespace cl {
     void Config::SetParameterFile(const string & filename) {
-        if (config_ == NULL) {
+        if (_config == NULL) {
             lock_guard<mutex> guard(mu);
-            if (config_ ==NULL) {
+            if (_config ==NULL) {
                 Config * temp = new Config();
-                config_ = temp;
+                _config = temp;
             }
         }
-        config_->file_ = cv::FileStorage(filename.c_str(), cv::FileStorage::READ);
-        if (config_->file_.isOpened() == false) {
+        _config->_file = cv::FileStorage(filename.c_str(), cv::FileStorage::READ);
+        if (_config->_file.isOpened() == false) {
             cerr << "Parameter file " << filename << " does not exist." << endl;
-            config_->file_.release();
+            _config->_file.release();
             return;
         }
     }
 
     Config::~Config() {
-        if (file_.isOpened()) {
-            file_.release();
+        if (_file.isOpened()) {
+            _file.release();
         }
-        if (config_ != NULL) {
-            delete config_;
+        if (_config != NULL) {
+            delete _config;
         }
     }
 
-    Config * Config::config_ = NULL;
+    Config * Config::_config = NULL;
 }
