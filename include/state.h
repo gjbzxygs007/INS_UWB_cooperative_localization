@@ -14,16 +14,18 @@ namespace cl {
     public:
         static const int dim_state = D;
         typedef Eigen::Matrix<double, D, 1, Eigen::ColMajor> State;
+        typedef Eigen::Matrix<double, D, D, Eigen::ColMajor> Covariance;
         typedef std::shared_ptr<StateVector<D>> Ptr;
 
         StateVector() = default;
         ~StateVector() = default;
 
-        inline void setState (const State & s, StateType & t) {_state = s; _type = t;}
+        inline void setState (const State & s, const Covariance & c, const StateType & t) {_state = s; _cov = c; _type = t;}
         inline State getState() {return _state; }
 
     private:
         State _state;
+        Covariance _cov;
         StateType _type;
     };
 }

@@ -2,9 +2,7 @@
 #define COOPERATIVE_MEASUREMENT_MODEL_H
 
 /* Define the state, jacobian of different
- *
- *
- *
+ * information needed for CL update
  */
 
 #include <iostream>
@@ -17,41 +15,48 @@ namespace coop {
     // 9 dim state and scale measurement
     class ImuPlusRange {
     public:
+        typedef RelMeasurement<1> MeasurementClass;
         typedef StateVector<9> StateClass;
-        typedef RelMeasurement<9> MeasurementClass;
-        typedef RelMeasurement<9>::Measurement Measurement;
+        typedef MeasurementClass::Measurement Measurement;
         typedef Eigen::Matrix<double, 1, 9, Eigen::RowMajor> Jacobian;
-        typedef std::shared_ptr<ImuPlusRange> Ptr;
 
         // Constructor and destructors
-        ImuPlusRange() : _state_i(nullptr), _state_j(nullptr), _meas(nullptr) {}
+        ImuPlusRange() : _meas(nullptr) {}
 
         /* Input:
          *  s_i    the state of agent i
          *  s_j    the state of agent j
          *  m      relative range measurement
          */
-        ImuPlusRange(StateClass & s_i, StateClass & s_j, MeasurementClass & m);
-        ~ImuPlusRange() = default;
-
+        ImuPlusRange(Ptr & m);
+        virtual ~ImuPlusRange() {}
+//
+    // Accessors
+        MeasurementClass::Ptr getMeasurement() {return _meas;}
+        Measurement getResidual() {return _residual;}
+        Jacobian getJacobiani() {return _jacobian_i;}
+        Jacobian getJacobianj() {return _jacobian_j;}
         StateClass::Ptr getStatei() {return _state_i;}
         StateClass::Ptr getStatej() {return _state_j;}
-        MeasurementClass::Ptr getMeasurement() {return _meas;}
-        Jacobian getJacobiani() {return _jacobian_i; }
 
+        // update the relative measurement
+        void updateMeasurement(Measurement & m);
+
+        // update the local state of each agent
         void updateState(StateClass::Ptr & s1, StateClass::Ptr & s2);
-        void updateMeasurement(MeasurementClass::Ptr & m);
-        // Update the measurement Jacobian matrix
-        void updateJacobian();
+
+        // Update the residual once a new relative measurement is detected
         void updateResidual();
 
+        // Update the measurement Jacobian matrix
+        void updateJacobian(StateClass::Ptr & s1, StateClass::Ptr & s2);
     private:
+        MeasurementClass::Ptr _meas;
         Measurement _residual;
         Jacobian _jacobian_i;
         Jacobian _jacobian_j;
         StateClass::Ptr _state_i;
         StateClass::Ptr _state_j;
-        MeasurementClass::Ptr _meas;
     };
 
     // 3 dimensional state(x, y, theta) and relative pose measurement
@@ -81,8 +86,7 @@ namespace coop {
 //        RelMeasurement<3, 3> _meas;
 //    };
 
-
-    }
+}
 }
 
 #endif //COOPERATIVE_MEASUREMENT_MODEL_H
