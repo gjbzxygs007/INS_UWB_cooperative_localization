@@ -83,6 +83,7 @@ run_cl_EXTERNAL_OBJECTS =
 ../bin/run_cl: test/CMakeFiles/run_cl.dir/run_cl.cpp.o
 ../bin/run_cl: test/CMakeFiles/run_cl.dir/build.make
 ../bin/run_cl: ../lib/liblooselycl.so
+../bin/run_cl: ../lib/liblibvncxx.a
 ../bin/run_cl: /usr/local/lib/libopencv_dnn.so.3.4.10
 ../bin/run_cl: /usr/local/lib/libopencv_highgui.so.3.4.10
 ../bin/run_cl: /usr/local/lib/libopencv_ml.so.3.4.10
