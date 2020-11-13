@@ -8,22 +8,24 @@
 #include "common_include.h"
 
 namespace cl {
-    class Config {
-    private:
-        cv::FileStorage _file;
-        static Config * _config;
 
-        Config()=default;
-        Config(const Config & obj)=delete;
-        Config & operator=(const Config & obj)=delete;
+class Config {
+public:
+    ~Config();
 
-    public:
-        ~Config();
+    static void SetParameterFile(const string & filename);
 
-        static void SetParameterFile(const string & filename);
-        template<typename T>
-        static T get(const string & key) {return T(Config::_config->_file[key]); }
-    };
+    template<typename T>
+    static T get(const string & key) {return T(Config::_config->_file[key]); }
+
+private:
+    Config() = default;
+    Config(const Config & obj) = delete;
+    Config & operator=(const Config & obj) = delete;
+
+    cv::FileStorage file_;
+    static Config * config_;
+};
 
 }
 

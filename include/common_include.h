@@ -10,6 +10,9 @@
 #include <cmath>
 
 using namespace std;
+using namespace Eigen;
 
+const double kGravity {9.817269086191379};
+const double kPi {3.14159265};
 
 #endif //COOPERATIVE_COMMON_INCLUDE_H

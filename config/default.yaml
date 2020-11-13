@@ -1,3 +1,9 @@
 %YAML:1.0
 
 variance_of_range: 0.1 # meter
+variance_of_acceleration: 0.5
+variance_of_gyro: 0.0087266
+heading_angle: 0.0
+varaince_of_initial_position: 0.00001
+variance_of_initial_speed: 0.00001
+variance_of_initial_attitude: 0.00174
