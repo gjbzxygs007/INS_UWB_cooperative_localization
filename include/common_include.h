@@ -2,14 +2,16 @@
 
 #pragma once
 
-#include <memory>
+#include <fstream>
 #include <iostream>
-#include <string>
+#include <memory>
 #include <mutex>
+#include <string>
 
 #include <cmath>
 
 #include <Eigen/Core>
+#include <Eigen/Dense>
 #include <opencv2/core/core.hpp>
 
 const double kGravity {9.817269086191379};

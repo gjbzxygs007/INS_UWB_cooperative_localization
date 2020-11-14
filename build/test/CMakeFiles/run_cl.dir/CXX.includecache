@@ -7,17 +7,23 @@
 #IncludeRegexTransform: 
 
 ../include/common_include.h
-Eigen/Core
+fstream
 -
-opencv2/core/core.hpp
+iostream
 -
 memory
 -
-iostream
+mutex
 -
 string
 -
 cmath
+-
+Eigen/Core
+-
+Eigen/Dense
+-
+opencv2/core/core.hpp
 -
 
 ../include/config.h
@@ -41,22 +47,14 @@ state.h
 ../include/coop/state.h
 
 ../include/coop/relative_measurement.h
-iostream
--
 common_include.h
--
+../include/coop/common_include.h
 
 ../include/inertial/inertial_nav.h
-string
--
-iostream
--
-fstream
--
-Eigen/Dense
--
 common_include.h
 ../include/inertial/common_include.h
+state.h
+../include/inertial/state.h
 
 ../include/state.h
 common_include.h

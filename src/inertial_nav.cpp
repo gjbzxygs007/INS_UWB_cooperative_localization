@@ -2,8 +2,6 @@
 
 #include "inertial/inertial_nav.h"
 
-#include <math.h>
-
 #include "config.h"
 
 namespace inertial {
@@ -24,7 +22,7 @@ Inertial::Inertial(double roll, double pitch) {
     variance_speed *= variance_speed;
     variance_attitude *= variance_attitude;
 
-    state_ = Vector9d::Zero();
+    state_ = State::Zero();
     state_(6) = roll;
     state_(7) = pitch;
     state_(8) = cl::Config::get<double>("heading_angle");
@@ -49,40 +47,45 @@ Inertial::Inertial(double roll, double pitch) {
 	ConvertDcmToQuaternion();
 }
 
-void Inertial::Propagate(const Vector3d& readouts_acc, const Vector3d& readouts_gyro, double dt) {
+void Inertial::Propagate(const Eigen::Vector3d& readouts_acc, 
+		const Eigen::Vector3d& readouts_gyro, double dt) {
 	UpdateQuaternion(readouts_gyro, dt);
 	ConvertQuaternionToDcm();
 	state_(6) = atan2(dcm_matrix_(2, 1), dcm_matrix_(2, 2));
 	state_(7) = -atan(dcm_matrix_(2, 0) / sqrt(1 - pow(dcm_matrix_(2, 0), 2)));
 	state_(8) = atan2(dcm_matrix_(1, 0), dcm_matrix_(0, 0));
 	// Rotate the accelerations from local to navigation frame;	
-	Vector3d readouts_acc_global = dcm_matrix_ * readouts_acc;
- 	Vector3d gravity_vector;
+	Eigen::Vector3d readouts_acc_global = dcm_matrix_ * readouts_acc;
+ 	Eigen::Vector3d gravity_vector;
  	gravity_vector << 0, 0, kGravity;
-	Vector3d accelerations = readouts_acc_global + gravity_vector;
-	Vector3d position, velocity;
-	position = state_.segment(0, 3) + state_.segment(3, 3) * dt / 1000 + accelerations * 0.5 * pow(dt / 1000, 2);
+	Eigen::Vector3d accelerations = readouts_acc_global + gravity_vector;
+	Eigen::Vector3d position, velocity;
+	position = state_.segment(0, 3) + state_.segment(3, 3) * dt / 1000 + 
+		accelerations * 0.5 * pow(dt / 1000, 2);
+
 	velocity = state_.segment(3, 3) + accelerations * dt / 1000;
 	state_.segment(0, 3) = position;
 	state_.segment(3, 3) = velocity;
- 	Matrix3d s_t;
+ 	Eigen::Matrix3d s_t;
     s_t << 0, -readouts_acc_global(2), readouts_acc_global(1),
     	   readouts_acc_global(2), 0, -readouts_acc_global(0),
     	   -readouts_acc_global(1), readouts_acc_global(0), 0;
-   	MatrixNbN state_transition;
+   	Covariance state_transition;
     MatrixNbS input_transition;
-    state_transition << Matrix3d::Identity(), Matrix3d::Identity() * dt / 1000,Matrix3d::Zero(),
-    	   				Matrix3d::Zero(), Matrix3d::Identity(),s_t * dt / 1000,
-    	   				Matrix3d::Zero(), Matrix3d::Zero(), Matrix3d::Identity();
-    input_transition << Matrix3d::Zero(), Matrix3d::Zero(),
-    	   				dcm_matrix_ * dt / 1000, Matrix3d::Zero(),
-    	   				Matrix3d::Zero(), -dcm_matrix_ * dt / 1000;
-    MatrixNbN temp;
-    temp = state_transition * covariance_ * state_transition.transpose() + input_transition * covariance_imu_ * input_transition.transpose();
-    covariance_ = (temp + temp.transpose()) * 0.5;
+    state_transition << Eigen::Matrix3d::Identity(), Eigen::Matrix3d::Identity() * dt / 1000,Eigen::Matrix3d::Zero(),
+    	   				Eigen::Matrix3d::Zero(), Eigen::Matrix3d::Identity(),s_t * dt / 1000,
+    	   				Eigen::Matrix3d::Zero(), Eigen::Matrix3d::Zero(), Eigen::Matrix3d::Identity();
+    input_transition << Eigen::Matrix3d::Zero(), Eigen::Matrix3d::Zero(),
+    	   				dcm_matrix_ * dt / 1000, Eigen::Matrix3d::Zero(),
+    	   				Eigen::Matrix3d::Zero(), -dcm_matrix_ * dt / 1000;
+    Covariance temp;
+    temp = state_transition * covariance_ * state_transition.transpose()
+		+ input_transition * covariance_imu_ * input_transition.transpose();
+    
+	covariance_ = (temp + temp.transpose()) * 0.5;
 }
 
-bool Inertial::IsZeroVelocity(const Vector3d & readouts_gyro) {
+bool Inertial::IsZeroVelocity(const Eigen::Vector3d & readouts_gyro) {
 	double sigma_2g = pow(sigma_ * kPi / 180, 2);
 	double indication = pow(readouts_gyro.norm(), 2) / (sigma_2g * window_size_);
 	return indication < threshold_;
@@ -90,11 +93,11 @@ bool Inertial::IsZeroVelocity(const Vector3d & readouts_gyro) {
 
 void Inertial::UpdateZeroVelocity() {
 	MatrixNbT kalman_gain;
- 	Vector3d residual;
- 	Vector9d delta_state;
- 	Matrix3d covariance_residual;
+ 	Eigen::Vector3d residual;
+ 	State delta_state;
+ 	Eigen::Matrix3d covariance_residual;
  	MatrixTbN jacobian_zupt;
- 	jacobian_zupt << Matrix3d::Zero(), Matrix3d::Identity(), Matrix3d::Zero();
+ 	jacobian_zupt << Eigen::Matrix3d::Zero(), Eigen::Matrix3d::Identity(), Eigen::Matrix3d::Zero();
 
  	covariance_residual = jacobian_zupt * covariance_ * jacobian_zupt.transpose() + covariance_zupt_;
  	kalman_gain = covariance_ * jacobian_zupt.transpose() * covariance_residual.inverse();
@@ -102,12 +105,12 @@ void Inertial::UpdateZeroVelocity() {
 	delta_state = kalman_gain * residual;
 	state_ += delta_state;
 
-	Vector3d epsilon = delta_state.segment(6, 3);
-	Matrix3d omega;
+	Eigen::Vector3d epsilon = delta_state.segment(6, 3);
+	Eigen::Matrix3d omega;
 	omega << 0, -epsilon(2), epsilon(1),
 		     epsilon(2), 0, -epsilon(0),
 	         -epsilon(1), epsilon(0), 0;
-	dcm_matrix_ = (Matrix3d::Identity() - omega) * dcm_matrix_;
+	dcm_matrix_ = (Eigen::Matrix3d::Identity() - omega) * dcm_matrix_;
     state_(6) = atan2(dcm_matrix_(2, 1), dcm_matrix_(2, 2));
 	state_(7) = -atan(dcm_matrix_(2, 0) / sqrt(1 - pow(dcm_matrix_(2, 0), 2)));
 	state_(8) = atan2(dcm_matrix_(1, 0), dcm_matrix_(0, 0));
@@ -116,12 +119,14 @@ void Inertial::UpdateZeroVelocity() {
 	covariance_ = (covariance_ + covariance_.transpose()) / 2;
 }
 
-void Inertial::UpdateQuaternion(const Vector3d & readouts_gyro, double dt) {
+void Inertial::UpdateQuaternion(const Eigen::Vector3d & readouts_gyro, double dt) {
 	double p = readouts_gyro(0) * dt / 1000;
 	double q = readouts_gyro(1) * dt / 1000;
 	double r = readouts_gyro(2) * dt / 1000;
-	double sigma = dt / 1000 * sqrt(pow(readouts_gyro(0) ,2) + pow(readouts_gyro(1), 2) + pow(readouts_gyro(2), 2));
-	Matrix4d omega;
+	double sigma = dt / 1000 * sqrt(pow(readouts_gyro(0) ,2) + pow(readouts_gyro(1), 2) + 
+		pow(readouts_gyro(2), 2));
+		
+	Eigen::Matrix4d omega;
 	omega << 0, 0.5 * r, -0.5 * q, 0.5 * p,
 		     -0.5 * r, 0, 0.5 * p, 0.5 * q,
 		     0.5 * q, -0.5 * p, 0, 0.5 * r,
@@ -179,10 +184,10 @@ void Inertial::ConvertQuaternionToDcm() {
 
 void Inertial::ConvertDcmToQuaternion() {
 	double T, S, qw, qx, qy, qz;
-	Vector4d dd;
+	Eigen::Vector4d dd;
 	T = 1 + dcm_matrix_(0, 0) + dcm_matrix_(1, 1) + dcm_matrix_(2, 2);
 
-	if ( T > 1e-8) {
+	if (T > 1e-8) {
 		S = 0.5 / sqrt(T);
 		qw = 0.25 / S;
 		qx = (dcm_matrix_(2, 1) - dcm_matrix_(1, 2)) * S;

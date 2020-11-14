@@ -2,31 +2,23 @@
 
 #pragma once
 
-#include <string>
-#include <iostream>
-#include <fstream>
-
-#include <Eigen/Dense>
-
 #include "common_include.h"
-#include "coop/measurement_model.h"
 #include "state.h"
 
 namespace inertial {
 
 class Inertial final {
 public:
-	typedef 
-
-	typedef Matrix<double, 3, 6> MatrixTbS;
-	typedef Matrix<double, 9, 6> MatrixNbS;
-	typedef Matrix<double, 9, 1> Vector9d;
-	typedef Matrix<double, 4, 4> MatrixFbF;
-	typedef Matrix<double, 6, 6> MatrixSbS;
-	typedef Matrix<double, 9, 3> MatrixNbT;
-	typedef Matrix<double, 3, 9> MatrixTbN;
-	typedef Matrix<double, 4, 9> MatrixFbN;
-	typedef Matrix<double, 9, 4> MatrixNbF;
+	typedef cl::StateVector<9>::State State;
+	typedef cl::StateVector<9>::Covariance Covariance;
+	typedef Eigen::Matrix<double, 3, 6> MatrixTbS;
+	typedef Eigen::Matrix<double, 9, 6> MatrixNbS;
+	typedef Eigen::Matrix<double, 4, 4> MatrixFbF;
+	typedef Eigen::Matrix<double, 6, 6> MatrixSbS;
+	typedef Eigen::Matrix<double, 9, 3> MatrixNbT;
+	typedef Eigen::Matrix<double, 3, 9> MatrixTbN;
+	typedef Eigen::Matrix<double, 4, 9> MatrixFbN;
+	typedef Eigen::Matrix<double, 9, 4> MatrixNbF;
 
     Inertial(double roll, double pitch);
     ~Inertial() = default;
@@ -36,11 +28,11 @@ public:
 	// Input: 
 	//		 readouts_acc: the readouts from accelerometer
 	//       readouts_gyro: the readouts from gyroscope
-	void Propagate(const Vector3d& readouts_acc, const Vector3d& readouts_gyro, double dt);
+	void Propagate(const Eigen::Vector3d& readouts_acc, const Eigen::Vector3d& readouts_gyro, double dt);
 
 	// If the current step zero velocity based on the given threshold (look at the magnitude of 
 	// angular velocity comparing with threshold value at given window).
-	bool IsZeroVelocity(const Vector3d& readouts_gyro);
+	bool IsZeroVelocity(const Eigen::Vector3d& readouts_gyro);
 	
     // Update the free INS with the zero velocity psuedo measurement
 	void UpdateZeroVelocity();
@@ -52,20 +44,20 @@ public:
 		ConvertDcmToQuaternion();
 	}
 
-	const Vector9d& state() const {
+	const State& state() const {
 		return state_;
 	}
 
-	const MatrixNbN& covariance() const {
+	const Covariance& covariance() const {
 		return covariance_;
 	}
 
 	void PrintState() const {
-		cout << state_.transpose() << endl;
+		std::cout << state_.transpose() << std::endl;
 	}
 
 	void SaveState(std::ofstream & of) const {
-	of << state_.transpose() << " " << covariance_(0) << " " << covariance_(1) << " " << covariance_(2) << endl;
+		of << state_.transpose() << " " << covariance_(0) << " " << covariance_(1) << " " << covariance_(2) << std::endl;
 	}
 
 private:
@@ -75,24 +67,24 @@ private:
 	//       dt: step size between two readouts.
 	// Output:
 	//        quaternion: 4 * 1 vector (float type for now);
-	void UpdateQuaternion(const Vector3d & readouts_gyro, double dt);
+	void UpdateQuaternion(const Eigen::Vector3d & readouts_gyro, double dt);
 	// Ipute: quaternion
 	// OUtput: DCM matrix
 	void ConvertQuaternionToDcm();
 	void ConvertDcmToQuaternion();
 	void ConvertEulerToDcm();
 
-    Vector9d state_;
-    MatrixNbN covariance_;
+    State state_;
+    Covariance covariance_;
     MatrixSbS covariance_imu_;
-    Vector4d quaternion_;
-    Matrix3d dcm_matrix_;
+    Eigen::Vector4d quaternion_;
+    Eigen::Matrix3d dcm_matrix_;
 
 	// Zero velocity detector configs
 	int window_size_;
 	double threshold_;
 	double sigma_;
-	Matrix3d covariance_zupt_;
+	Eigen::Matrix3d covariance_zupt_;
 };
 
 } // namespace

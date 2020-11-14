@@ -87,6 +87,6 @@ private:
 //        RelMeasurement<3, 3> _meas;
 //    };
 
-}
-}
+} // namespace coop
+} // namespace cl
 

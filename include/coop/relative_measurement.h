@@ -25,7 +25,7 @@ public:
     ~RelativeMeasurement() = default;
 
     // Mutator
-    inline void SetMeasurement(const Measurement & meas) { measurement = meas; }
+    inline void SetMeasurement(const Measurement & meas) { measurement_ = meas; }
 
     // Accessor
     inline Measurement measurement() const { return measurement_; }

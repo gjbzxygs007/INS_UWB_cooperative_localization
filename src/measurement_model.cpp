@@ -26,7 +26,7 @@ void ImuPlusRange::UpdateMeasurement(const Measurement & meas) {
 }
 
 // \brief update the current states of i and j
-void ImuPlusRange::UpdateState(State & s1, State & s2) {
+void ImuPlusRange::UpdateState(const State & s1, const State & s2) {
     state_i_ = s1;
     state_j_ = s2;
 }
@@ -57,9 +57,9 @@ void ImuPlusRange::UpdateJacobian() {
 
 // \brief: the UWB ranging model h(xi, xj)
 double ImuPlusRange::RangingModel() {
-    double sd1 = state_i(0, 0) - state_j_(0, 0);
-    double sd2 = state_i(1, 0) - state_j_(1, 0);
-    double sd3 = state_i(2, 0) - state_j_(2, 0);
+    double sd1 = state_i_(0, 0) - state_j_(0, 0);
+    double sd2 = state_i_(1, 0) - state_j_(1, 0);
+    double sd3 = state_i_(2, 0) - state_j_(2, 0);
     return sqrt(sd1 * sd1 + sd2 * sd2 + sd3 * sd3);
 }
 
@@ -100,6 +100,6 @@ double ImuPlusRange::RangingModel() {
 //        }
 
 
-}
-}
+} // namespace coop
+} // namespace cl
 

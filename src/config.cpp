@@ -5,7 +5,7 @@
 
 namespace {
 
-mutex mu;
+std::mutex mu;
 
 } // namespace
 
@@ -13,9 +13,9 @@ namespace cl {
 
 std::shared_ptr<Config> Config::config_ = nullptr;
 
-void Config::SetParameterFile(const string & filename) {
+void Config::SetParameterFile(const std::string & filename) {
     if (config_ == nullptr) {
-        lock_guard<mutex> guard(mu);
+        std::lock_guard<std::mutex> guard(mu);
         if (config_ == nullptr) {
             config_ = std::shared_ptr<Config>(new Config);
         }
@@ -23,7 +23,7 @@ void Config::SetParameterFile(const string & filename) {
 
     config_->file_.open(filename, cv::FileStorage::READ);
     if (config_->file_.isOpened() == false) {
-        cerr << "Parameter file " << filename << " does not exist." << endl;
+        std::cerr << "Parameter file " << filename << " does not exist." << std::endl;
         config_->file_.release();
         return;
     }
