@@ -7,30 +7,23 @@
 
 mutex mu;
 namespace cl {
-    void Config::SetParameterFile(const string & filename) {
-        if (_config == NULL) {
-            lock_guard<mutex> guard(mu);
-            if (_config ==NULL) {
-                Config * temp = new Config();
-                _config = temp;
-            }
-        }
-        _config->_file = cv::FileStorage(filename.c_str(), cv::FileStorage::READ);
-        if (_config->_file.isOpened() == false) {
-            cerr << "Parameter file " << filename << " does not exist." << endl;
-            _config->_file.release();
-            return;
+
+std::shared_ptr<Config> Config::config_ = nullptr;
+
+void Config::SetParameterFile(const string & filename) {
+    if (config_ == nullptr) {
+        lock_guard<mutex> guard(mu);
+        if (config_ == nullptr) {
+            config_ = std::shared_ptr<Config>(new Config);
         }
     }
 
-    Config::~Config() {
-        if (_file.isOpened()) {
-            _file.release();
-        }
-        if (_config != NULL) {
-            delete _config;
-        }
+    config_->file_ = cv::FileStorage(filename.c_str(), cv::FileStorage::READ);
+    if (config_->file_.isOpened() == false) {
+        cerr << "Parameter file " << filename << " does not exist." << endl;
+        config_->file_.release();
+        return;
     }
-
-    Config * Config::_config = NULL;
 }
+
+} // namespace cl

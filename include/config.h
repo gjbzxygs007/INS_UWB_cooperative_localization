@@ -11,20 +11,20 @@ namespace cl {
 
 class Config {
 public:
-    ~Config();
+    ~Config() = default;
 
     static void SetParameterFile(const string & filename);
 
     template<typename T>
-    static T get(const string & key) {return T(Config::_config->_file[key]); }
+    static T get(const string& key) {return T(Config::config_->file_[key]); }
 
 private:
-    Config() = default;
+    Config() {}
     Config(const Config & obj) = delete;
     Config & operator=(const Config & obj) = delete;
 
     cv::FileStorage file_;
-    static Config * config_;
+    static std::shared_ptr<Config> config_;
 };
 
 }

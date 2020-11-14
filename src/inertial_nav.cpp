@@ -14,24 +14,30 @@ Inertial::Inertial(double roll, double pitch) {
     double variance_position = cl::Config::get<double>("varaince_of_initial_position");
     double variance_speed = cl::Config::get<double>("variance_of_initial_speed");
     double variance_attitude = cl::Config::get<double>("variance_of_initial_attitude");
-    variance_position *= variance_position;
+    window_size_ = cl::Config::get<int>("zero_velocity_detector_window_size");
+	sigma_ = cl::Config::get<double>("zero_velocity_detector_sigma");
+	double variance_zupt = cl::Config::get<double>("zero_velocity_update_variance");
+	covariance_zupt_ << pow(variance_zupt, 2), 0, 0,
+		 			    0, pow(variance_zupt, 2), 0,
+		                0, 0, pow(variance_zupt, 2);
+	variance_position *= variance_position;
     variance_speed *= variance_speed;
     variance_attitude *= variance_attitude;
 
-    state_ = Vector9d::Zeros();
+    state_ = Vector9d::Zero();
     state_(6) = roll;
     state_(7) = pitch;
     state_(8) = cl::Config::get<double>("heading_angle");
 
-    covariance_ << 1e-10, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 1e-10, 0, 0, 0, 0, 0, 0, 0,
-				    0, 0, 1e-10, 0, 0, 0, 0, 0, 0,
-		 		    0, 0, 0, 1e-10, 0, 0, 0, 0, 0,
-				    0, 0, 0, 0, 1e-10, 0, 0, 0, 0,
-				    0, 0, 0, 0, 0, 1e-10, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, pow(0.1 * kPi / 180, 2), 0, 0,
-					0, 0, 0, 0, 0, 0, 0, pow(0.1 * kPi / 180, 2), 0,
-					0, 0, 0, 0, 0, 0, 0, 0, pow(0.1 * kPi / 180, 2);
+    covariance_ << pow(variance_position, 2), 0, 0, 0, 0, 0, 0, 0, 0,
+					0, pow(variance_position, 2), 0, 0, 0, 0, 0, 0, 0,
+				    0, 0, pow(variance_position, 2), 0, 0, 0, 0, 0, 0,
+		 		    0, 0, 0, pow(variance_speed, 2), 0, 0, 0, 0, 0,
+				    0, 0, 0, 0, pow(variance_speed, 2), 0, 0, 0, 0,
+				    0, 0, 0, 0, 0, pow(variance_speed, 2), 0, 0, 0,
+					0, 0, 0, 0, 0, 0, pow(variance_attitude, 2), 0, 0,
+					0, 0, 0, 0, 0, 0, 0, pow(variance_attitude, 2), 0,
+					0, 0, 0, 0, 0, 0, 0, 0, pow(variance_attitude, 2);
 
     covariance_imu_ << pow(sigma_acc,2), 0, 0, 0, 0, 0,
 		 			   0, pow(sigma_acc,2), 0, 0, 0, 0,
@@ -40,23 +46,106 @@ Inertial::Inertial(double roll, double pitch) {
 	                   0, 0, 0, 0, pow(sigma_gyro,2), 0,
                        0, 0, 0, 0, 0, pow(sigma_gyro,2);
     ConvertEulerToDcm();
+	ConvertDcmToQuaternion();
 }
 
+void Inertial::Propagate(const Vector3d& readouts_acc, const Vector3d& readouts_gyro, double dt) {
+	UpdateQuaternion(readouts_gyro, dt);
+	ConvertQuaternionToDcm();
+	state_(6) = atan2(dcm_matrix_(2, 1), dcm_matrix_(2, 2));
+	state_(7) = -atan(dcm_matrix_(2, 0) / sqrt(1 - pow(dcm_matrix_(2, 0), 2)));
+	state_(8) = atan2(dcm_matrix_(1, 0), dcm_matrix_(0, 0));
+	// Rotate the accelerations from local to navigation frame;	
+	Vector3d readouts_acc_global = dcm_matrix_ * readouts_acc;
+ 	Vector3d gravity_vector;
+ 	gravity_vector << 0, 0, kGravity;
+	Vector3d accelerations = readouts_acc_global + gravity_vector;
+	Vector3d position, velocity;
+	position = state_.segment(0, 3) + state_.segment(3, 3) * dt / 1000 + accelerations * 0.5 * pow(dt / 1000, 2);
+	velocity = state_.segment(3, 3) + accelerations * dt / 1000;
+	state_.segment(0, 3) = position;
+	state_.segment(3, 3) = velocity;
+ 	Matrix3d s_t;
+    s_t << 0, -readouts_acc_global(2), readouts_acc_global(1),
+    	   readouts_acc_global(2), 0, -readouts_acc_global(0),
+    	   -readouts_acc_global(1), readouts_acc_global(0), 0;
+   	MatrixNbN state_transition;
+    MatrixNbS input_transition;
+    state_transition << Matrix3d::Identity(), Matrix3d::Identity() * dt / 1000,Matrix3d::Zero(),
+    	   				Matrix3d::Zero(), Matrix3d::Identity(),s_t * dt / 1000,
+    	   				Matrix3d::Zero(), Matrix3d::Zero(), Matrix3d::Identity();
+    input_transition << Matrix3d::Zero(), Matrix3d::Zero(),
+    	   				dcm_matrix_ * dt / 1000, Matrix3d::Zero(),
+    	   				Matrix3d::Zero(), -dcm_matrix_ * dt / 1000;
+    MatrixNbN temp;
+    temp = state_transition * covariance_ * state_transition.transpose() + input_transition * covariance_imu_ * input_transition.transpose();
+    covariance_ = (temp + temp.transpose()) * 0.5;
+}
 
+bool Inertial::IsZeroVelocity(const Vector3d & readouts_gyro) {
+	double sigma_2g = pow(sigma_ * kPi / 180, 2);
+	double indication = pow(readouts_gyro.norm(), 2) / (sigma_2g * window_size_);
+	return indication < threshold_;
+}
 
+void Inertial::UpdateZeroVelocity() {
+	MatrixNbT kalman_gain;
+ 	Vector3d residual;
+ 	Vector9d delta_state;
+ 	Matrix3d covariance_residual;
+ 	MatrixTbN jacobian_zupt;
+ 	jacobian_zupt << Matrix3d::Zero(), Matrix3d::Identity(), Matrix3d::Zero();
+
+ 	covariance_residual = jacobian_zupt * covariance_ * jacobian_zupt.transpose() + covariance_zupt_;
+ 	kalman_gain = covariance_ * jacobian_zupt.transpose() * covariance_residual.inverse();
+ 	residual = -state_.segment(3, 3);
+	delta_state = kalman_gain * residual;
+	state_ += delta_state;
+
+	Vector3d epsilon = delta_state.segment(6, 3);
+	Matrix3d omega;
+	omega << 0, -epsilon(2), epsilon(1),
+		     epsilon(2), 0, -epsilon(0),
+	         -epsilon(1), epsilon(0), 0;
+	dcm_matrix_ = (Matrix3d::Identity() - omega) * dcm_matrix_;
+    state_(6) = atan2(dcm_matrix_(2, 1), dcm_matrix_(2, 2));
+	state_(7) = -atan(dcm_matrix_(2, 0) / sqrt(1 - pow(dcm_matrix_(2, 0), 2)));
+	state_(8) = atan2(dcm_matrix_(1, 0), dcm_matrix_(0, 0));
+	ConvertDcmToQuaternion();
+	covariance_ = covariance_ - kalman_gain * jacobian_zupt * covariance_;
+	covariance_ = (covariance_ + covariance_.transpose()) / 2;
+}
+
+void Inertial::UpdateQuaternion(const Vector3d & readouts_gyro, double dt) {
+	double p = readouts_gyro(0) * dt / 1000;
+	double q = readouts_gyro(1) * dt / 1000;
+	double r = readouts_gyro(2) * dt / 1000;
+	double sigma = dt / 1000 * sqrt(pow(readouts_gyro(0) ,2) + pow(readouts_gyro(1), 2) + pow(readouts_gyro(2), 2));
+	Matrix4d omega;
+	omega << 0, 0.5 * r, -0.5 * q, 0.5 * p,
+		     -0.5 * r, 0, 0.5 * p, 0.5 * q,
+		     0.5 * q, -0.5 * p, 0, 0.5 * r,
+		     -0.5 * p, -0.5 * q, -0.5 * r, 0;
+	if(sigma != 0) {
+		double sigma_cos = cos(sigma / 2);
+		double sigma_sin = sin(sigma / 2);
+		quaternion_ = sigma_cos * quaternion_ + 2 / sigma * sigma_sin * omega * quaternion_;
+		quaternion_ = 1 / (quaternion_.norm()) * quaternion_;
+	}
+}
 
 void Inertial::ConvertQuaternionToDcm() {
 	double p1 = pow(quaternion_(0), 2), p2 = pow(quaternion_(1), 2);
 	double p3 = pow(quaternion_(2), 2), p4 = pow(quaternion_(3), 2);
-	double p5 = p2 + p3
-    double p6 = 0;
+	double p5 = p2 + p3;
+    double p6 = 0.0;
 	if (p1 + p4 + p5 != 0) {
 		p6 = 2 / (p1 + p4 + p5);
 	}
 
-	dcm_matrix << 1 - p6 * p5, 0, 0,
-				  0, 1 - p6 * ( p1 + p3), 0,
-				  0, 0, 1 - p6 * (p1 + p2);
+	dcm_matrix_ << 1 - p6 * p5, 0, 0,
+				   0, 1 - p6 * ( p1 + p3), 0,
+				   0, 0, 1 - p6 * (p1 + p2);
 
 	// Type p1_new = p6 * quaternion(0);
 	// Type p2_new = p6 * quaternion(1);

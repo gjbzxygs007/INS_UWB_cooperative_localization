@@ -7,3 +7,8 @@ heading_angle: 0.0
 varaince_of_initial_position: 0.00001
 variance_of_initial_speed: 0.00001
 variance_of_initial_attitude: 0.00174
+zero_velocity_detector_window_size: 1
+zero_velocity_detector_threshold: 30000
+zero_velocity_detector_sigma: 0.1
+zero_velocity_update_variance: 0.001
+uwb_path: /dev/ttyUSB0

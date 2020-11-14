@@ -1,6 +1,6 @@
 // Authors: jiananz1@uci.edu
-
-#pragma once
+#ifndef INERTIAL_NAV_H
+#define INERTIAL_NAV_H
 
 #include <string>
 #include <iostream>
@@ -14,29 +14,30 @@ namespace inertial {
 
 class Inertial final {
 public:
-    typedef Matrix<Type, 9, 9> MatrixNbN;
-	typedef Matrix<Type, 3, 6> MatrixTbS;
-	typedef Matrix<Type, 9, 6> MatrixNbS;
-	typedef Matrix<Type, 9, 1> Vector9d;
-	typedef Matrix<Type, 4, 4> MatrixFbF;
-	typedef Matrix<Type, 6, 6> MatrixSbS;
-	typedef Matrix<Type, 9, 3> MatrixNbT;
-	typedef Matrix<Type, 3, 9> MatrixTbN;
-	typedef Matrix<Type, 4, 9> MatrixFbN;
-	typedef Matrix<Type, 9, 4> MatrixNbF;
+    typedef Matrix<double, 9, 9> MatrixNbN;
+	typedef Matrix<double, 3, 6> MatrixTbS;
+	typedef Matrix<double, 9, 6> MatrixNbS;
+	typedef Matrix<double, 9, 1> Vector9d;
+	typedef Matrix<double, 4, 4> MatrixFbF;
+	typedef Matrix<double, 6, 6> MatrixSbS;
+	typedef Matrix<double, 9, 3> MatrixNbT;
+	typedef Matrix<double, 3, 9> MatrixTbN;
+	typedef Matrix<double, 4, 9> MatrixFbN;
+	typedef Matrix<double, 9, 4> MatrixNbF;
 
-    Inertial();
-    ~Inerial() = default;
+    Inertial(double roll, double pitch);
+    ~Inertial() = default;
+	Inertial & operator=(const Inertial & object) = default;
 
     // Free INS:
 	// Input: 
 	//		 readouts_acc: the readouts from accelerometer
 	//       readouts_gyro: the readouts from gyroscope
-	void Propagate(const Vector3d & readouts_acc, const Vector3d & readouts_gyro, double dt);
+	void Propagate(const Vector3d& readouts_acc, const Vector3d& readouts_gyro, double dt);
 
 	// If the current step zero velocity based on the given threshold (look at the magnitude of 
 	// angular velocity comparing with threshold value at given window).
-	bool CheckZeroVelocity(int window, double sigma_g,double threshold, const Vector3d & readouts_gyro);
+	bool IsZeroVelocity(const Vector3d& readouts_gyro);
 	
     // Update the free INS with the zero velocity psuedo measurement
 	void UpdateZeroVelocity();
@@ -48,26 +49,21 @@ public:
 		ConvertDcmToQuaternion();
 	}
 
-	Vector9d & state() {
-		return state;
+	const Vector9d& state() const {
+		return state_;
 	}
 
-	MatrixNbN & covariance() {
-		return covariance;
+	const MatrixNbN& covariance() const {
+		return covariance_;
 	}
 
-	void PrintState() {
-		cout << state.transpose() << endl;
+	void PrintState() const {
+		cout << state_.transpose() << endl;
 	}
 
-	void SaveState(std::ofstream & of) {
-	of << state.transpose() <<" " << acc_.transpose() << " " << gyro_.transpose() <<covariance(0) << " " << covariance(1) << " " << covariance(2) << endl;
+	void SaveState(std::ofstream & of) const {
+	of << state_.transpose() << " " << covariance_(0) << " " << covariance_(1) << " " << covariance_(2) << endl;
 	}
-
-	// Overloaded assignment operator
-	Inertial & operator=(const Inertial & object);
-	// Function to save the data to local file
-	//friend std::ofstream & operator<<(std::ofstream & of, const Inertial<Type> &);
 
 private:
     // Input:
@@ -88,6 +84,14 @@ private:
     MatrixSbS covariance_imu_;
     Vector4d quaternion_;
     Matrix3d dcm_matrix_;
+
+	// Zero velocity detector configs
+	int window_size_;
+	double threshold_;
+	double sigma_;
+	Matrix3d covariance_zupt_;
 };
 
 } // namespace
+
+#endif
