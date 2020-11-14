@@ -1,9 +1,6 @@
-//
-// Created by ubuntu-jianan
-//
+// Authors: jiananz1@uci.edu
 
-#ifndef COOPERATIVE_CONFIG_H
-#define COOPERATIVE_CONFIG_H
+#pragma once
 
 #include "common_include.h"
 
@@ -13,13 +10,13 @@ class Config {
 public:
     ~Config() = default;
 
-    static void SetParameterFile(const string & filename);
+    static void SetParameterFile(const std::string & filename);
 
     template<typename T>
-    static T get(const string& key) {return T(Config::config_->file_[key]); }
+    static T get(const std::string& key) {return T(Config::config_->file_[key]); }
 
 private:
-    Config() {}
+    Config() = default;
     Config(const Config & obj) = delete;
     Config & operator=(const Config & obj) = delete;
 
@@ -27,8 +24,5 @@ private:
     static std::shared_ptr<Config> config_;
 };
 
-}
+} // namespace cl
 
-
-
-#endif //COOPERATIVE_CONFIG_H

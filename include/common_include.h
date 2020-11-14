@@ -1,18 +1,17 @@
+// Authors: jiananz1@uci.edu
 
-#ifndef COOPERATIVE_COMMON_INCLUDE_H
-#define COOPERATIVE_COMMON_INCLUDE_H
+#pragma once
 
-#include <Eigen/Core>
-#include <opencv2/core/core.hpp>
 #include <memory>
 #include <iostream>
 #include <string>
+#include <mutex>
+
 #include <cmath>
 
-using namespace std;
-using namespace Eigen;
+#include <Eigen/Core>
+#include <opencv2/core/core.hpp>
 
 const double kGravity {9.817269086191379};
 const double kPi {3.14159265};
 
-#endif //COOPERATIVE_COMMON_INCLUDE_H

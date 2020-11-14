@@ -1,5 +1,10 @@
-#ifndef COOPERATIVE_COOPERATIVE_H
-#define COOPERATIVE_COOPERATIVE_H
+// Authors: jiananz1@uci.edu
+
+#pragma once
+
+#include "common_include.h"
+#include "coop/measurement_model.h"
+#include "state.h"
 
 /*
  * Define the class for cooperative localization
@@ -7,28 +12,24 @@
  * an implementation of DMV method has realized
  * TODO: realize PECMV method
  */
-#include "measurement_model.h"
 
 namespace cl {
 namespace coop {
-    template <int D, int E>
-    class Cooperative {
-    private:
-        ImuPlusRange::Ptr _state_update;
-        StateVector<D> _state;
-        RelMeasurement<
 
+template <int D, int E>
+class Cooperative {
+public:
+    s
+    virtual Set
+    virtual Update
 
+private:
+    ImuPlusRange::Ptr _state_update;
+    StateVector<D> _state;
+    RelMeasurement<
 
-    public:
-        static int DIMSTATE = D;
-        s
-        virtual Set
-        virtual Update
+};
 
+} // namespace coop
+} // namespace cl
 
-
-    };
-}
-}
-#endif //COOPERATIVE_COOPERATIVE_H

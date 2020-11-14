@@ -1,9 +1,6 @@
-#ifndef COOPERATIVE_MEASUREMENT_MODEL_H
-#define COOPERATIVE_MEASUREMENT_MODEL_H
+// Authors: jiananz1@uci.edu
 
-/* Define the state, jacobian of different
- * information needed for CL update
- */
+#pragma once
 
 #include <iostream>
 #include "coop/relative_measurement.h"
@@ -12,54 +9,56 @@
 
 namespace cl {
 namespace coop {
-    // 9 dim state and scale measurement
-    class ImuPlusRange {
-    public:
-        typedef RelMeasurement<1> MeasurementClass;
-        typedef StateVector<9>::State State;
-        typedef MeasurementClass::Measurement Measurement;
-        typedef Eigen::Matrix<double, 1, 9, Eigen::RowMajor> Jacobian;
-        typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> MeasCov;
 
-        // Constructor and destructors
-        ImuPlusRange();
-        ~ImuPlusRange() {}
-//
+// 9 dim state and scalar measurement
+class ImuPlusRange final {
+public:
+    typedef RelativeMeasurement<1> MeasurementClass;
+    typedef StateVector<9>::State State;
+    typedef MeasurementClass::Measurement Measurement;
+    typedef Eigen::Matrix<double, 1, 9, Eigen::RowMajor> Jacobian;
+    typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> MeasurementCovariance;
+
+    // Constructor and destructors
+    ImuPlusRange();
+    ~ImuPlusRange() = default;
+
     // Accessors
-        MeasurementClass::Ptr getMeasurement() {return _meas;}
-        Measurement getResidual() {return _residual;}
-        MeasCov getMeasurementCov() {return _cov_meas;}
-        Jacobian getJacobiani() {return _jacobian_i;}
-        Jacobian getJacobianj() {return _jacobian_j;}
-        State getStatei() {return _state_i;}
-        State getStatej() {return _state_j;}
+    MeasurementClass::Ptr measurement_ptr() {return measurement_ptr_;}
+    Measurement residual() {return residual_;}
+    MeasurementCovariance measurement_covariance() {return measurement_covariance_;}
+    Jacobian jacobian_i() {return jacobian_i_;}
+    Jacobian jacobian_j() {return jacobian_j_;}
+    State state_i() {return state_i_;}
+    State state_j() {return state_j_;}
 
-        // update the relative measurement
-        void updateMeasurement(Measurement & m);
+    // update the relative measurement
+    void UpdateMeasurement(const Measurement& meas);
 
-        // update the local state of each agent
-        void updateState(State & s1, State & s2);
+    // update the local state of each agent
+    void UpdateState(const State& s1, const State& s2);
 
-        // Update the residual once a new relative measurement is detected
-        void updateResidual();
+    // Update the residual once a new relative measurement is detected
+    void UpdateResidual();
 
-        // Update the measurement Jacobian matrix
-        void updateJacobian();
+    // Update the measurement Jacobian matrix
+    void UpdateJacobian();
 
-    private:
-        MeasType _type;
-        StateType _type_s;
-        MeasurementClass::Ptr _meas;
-        Measurement _residual;
-        MeasCov _cov_meas;
-        Jacobian _jacobian_i;
-        Jacobian _jacobian_j;
-        State _state_i;
-        State _state_j;
+private:
+    // The relative ranging model
+    double RangingModel();
 
-        // The relative ranging model
-        double rangingModel();
-    };
+    MeasurementType measurement_type_;
+    StateType state_type_;
+    MeasurementClass::Ptr measurement_ptr_;
+    Measurement residual_;
+    MeasurementCovariance measurement_covariance_;
+    Jacobian jacobian_i_;
+    Jacobian jacobian_j_;
+    State state_i_;
+    State state_j_;
+
+};
 
     // 3 dimensional state(x, y, theta) and relative pose measurement
 //    class OdometryPlusPose {
@@ -91,4 +90,3 @@ namespace coop {
 }
 }
 
-#endif //COOPERATIVE_MEASUREMENT_MODEL_H

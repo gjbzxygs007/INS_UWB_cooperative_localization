@@ -1,42 +1,39 @@
+// Authors: jiananz1@uci.edu
 
+#pragma once
 
-#ifndef COOPERATIVE_MEASUREMENT_H
-#define COOPERATIVE_MEASUREMENT_H
-
-#include <iostream>
-#include <common_include.h>
-
+#include "common_include.h"
 
 namespace cl {
-    namespace coop {
-        enum MeasType {
-            RANGE,
-            POSE,
-        };
+namespace coop {
+    
+enum MeasurementType {
+    kRange,
+    kPose,
+};
 
-        template<int E>
-        class RelMeasurement {
-        public:
-            static const int dim_mea = E;
-            typedef Eigen::Matrix<double, E, 1, E == 1 ? Eigen::RowMajor : Eigen::ColMajor> Measurement;
-            typedef std::shared_ptr<RelMeasurement<E>> Ptr;
+template<int E>
+class RelativeMeasurement {
+public:
+    typedef Eigen::Matrix<double, E, 1, E == 1 ? Eigen::RowMajor : Eigen::ColMajor> Measurement;
+    typedef std::shared_ptr<RelativeMeasurement<E>> Ptr;
 
-            RelMeasurement(Measurement & m, MeasType & t) : _measurement(m), _type(t) {}
-            RelMeasurement() = default;
-            ~RelMeasurement() = default;
+    RelativeMeasurement(const Measurement& m, const MeasurementType& t) :
+        measurement_(m), type_(t) {}
 
-            // Mutator
-            inline void setMeasurement(const Measurement & mea) { _measurement = mea; }
+    RelativeMeasurement() = default;
+    ~RelativeMeasurement() = default;
 
-            // Accessor
-            inline Measurement getMeasurement() const { return _measurement; }
+    // Mutator
+    inline void SetMeasurement(const Measurement & meas) { measurement = meas; }
 
-        private:
-            Measurement _measurement;
-            MeasType _type;
-        };
-    }
-}
+    // Accessor
+    inline Measurement measurement() const { return measurement_; }
 
+private:
+    Measurement measurement_;
+    MeasurementType type_;
+};
 
-#endif //COOPERATIVE_MEASUREMENT_H
+} // namespace coop
+} // namespace cl

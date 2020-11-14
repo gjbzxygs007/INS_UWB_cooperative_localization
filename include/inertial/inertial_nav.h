@@ -1,6 +1,6 @@
 // Authors: jiananz1@uci.edu
-#ifndef INERTIAL_NAV_H
-#define INERTIAL_NAV_H
+
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -9,12 +9,15 @@
 #include <Eigen/Dense>
 
 #include "common_include.h"
+#include "coop/measurement_model.h"
+#include "state.h"
 
 namespace inertial {
 
 class Inertial final {
 public:
-    typedef Matrix<double, 9, 9> MatrixNbN;
+	typedef 
+
 	typedef Matrix<double, 3, 6> MatrixTbS;
 	typedef Matrix<double, 9, 6> MatrixNbS;
 	typedef Matrix<double, 9, 1> Vector9d;
@@ -94,4 +97,3 @@ private:
 
 } // namespace
 
-#endif

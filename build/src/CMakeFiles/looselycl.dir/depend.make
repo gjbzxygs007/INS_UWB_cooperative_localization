@@ -275,7 +275,10 @@ src/CMakeFiles/looselycl.dir/config.cpp.o: /usr/include/opencv4/opencv2/viz/widg
 
 src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: ../include/common_include.h
 src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: ../include/config.h
+src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: ../include/coop/measurement_model.h
+src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: ../include/coop/relative_measurement.h
 src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: ../include/inertial/inertial_nav.h
+src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: ../include/state.h
 src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: ../src/inertial_nav.cpp
 src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: /usr/include/eigen3/Eigen/Cholesky
 src/CMakeFiles/looselycl.dir/inertial_nav.cpp.o: /usr/include/eigen3/Eigen/Core

@@ -1,69 +1,67 @@
-//
-// Created by ubuntu-jianan
-//
+// Authors: jiananz1@uci.edu
 
-#include <cmath>
 #include "coop/measurement_model.h"
+
 #include "config.h"
 
 namespace cl {
 namespace coop {
-    ImuPlusRange::ImuPlusRange() {
-        _type = RANGE;
-        _type_s = THREE_DIM;
-        _jacobian_i = Jacobian::Zero();
-        _jacobian_j = Jacobian::Zero();
-        _residual = Measurement::Zero();
-        double r = Config::get<double>("variance_of_range");
-        _cov_meas << r;
-        Measurement m = Measurement::Zero();
-        _meas = make_shared<MeasurementClass>(m, _type);
-        _state_i = State::Zero();
-        _state_j = State::Zero();
-    }
 
-    // \brief update the current relative measurement
-    void ImuPlusRange::updateMeasurement(Measurement & m) {
-        _meas->setMeasurement(m);
-    }
+ImuPlusRange::ImuPlusRange() {
+    measurement_type_ = MeasurementType::kRange;
+    state_type_ = StateType::kNineDimension;
+    jacobian_i_ = Jacobian::Zero();
+    jacobian_j_ = Jacobian::Zero();
+    residual_ = Measurement::Zero();
+    measurement_covariance_ << Config::get<double>("variance_of_range");
+    Measurement meas = Measurement::Zero();
+    measurement_ptr_ = std::make_shared<MeasurementClass>(meas, measurement_type_);
+    state_i_ = State::Zero();
+    state_j_ = State::Zero();
+}
 
-    // \brief update the current states of i and j
-    void ImuPlusRange::updateState(State & s1, State & s2) {
-        _state_i = s1;
-        _state_j = s2;
-    }
+// \brief update the current relative measurement
+void ImuPlusRange::UpdateMeasurement(const Measurement & meas) {
+    measurement_ptr_->SetMeasurement(meas);
+}
 
-    // \brief: the UWB ranging model h(xi, xj)
-    double ImuPlusRange::rangingModel() {
-        double sd1 = _state_i(0, 0) - _state_j(0, 0);
-        double sd2 = _state_i(1, 0) - _state_j(1, 0);
-        double sd3 = _state_i(2, 0) - _state_j(2, 0);
-        return sqrt(sd1 * sd1 + sd2 * sd2 + sd3 * sd3);
-    }
+// \brief update the current states of i and j
+void ImuPlusRange::UpdateState(State & s1, State & s2) {
+    state_i_ = s1;
+    state_j_ = s2;
+}
 
-    void ImuPlusRange::updateResidual() {
-        Measurement meas_estimated;
-        meas_estimated << rangingModel();
-        _residual = _meas->getMeasurement() - meas_estimated;
-    }
+void ImuPlusRange::UpdateResidual() {
+    Measurement measurement_estimated;
+    measurement_estimated << RangingModel();
+    residual_ = measurement_ptr_->measurement() - measurement_estimated;
+}
 
-    // \brief return measurement jacobian matrix
-    void ImuPlusRange::updateJacobian() {
-        double x1 = _state_i(0, 0);
-        double y1 = _state_i(1, 0);
-        double z1 = _state_i(2, 0);
-        double x2 = _state_j(0, 0);
-        double y2 = _state_j(1, 0);
-        double z2 = _state_j(2, 0);
-        double r = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
-        _jacobian_i(0, 0) = (x1 - x2) / r;
-        _jacobian_i(1, 0) = (y1 - y2) / r;
-        _jacobian_i(2, 0) = (z1 - z2) / r;
-        _jacobian_j(0, 0) = (x2 - x1) / r;
-        _jacobian_j(1, 0) = (y2 - y1) / r;
-        _jacobian_j(2, 0) = (z2 - z1) / r;
-    }
+// \brief return measurement jacobian matrix
+void ImuPlusRange::UpdateJacobian() {
+    double x1 = state_i_(0, 0);
+    double y1 = state_i_(1, 0);
+    double z1 = state_i_(2, 0);
+    double x2 = state_j_(0, 0);
+    double y2 = state_j_(1, 0);
+    double z2 = state_j_(2, 0);
+    double r = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
+    jacobian_i_(0, 0) = (x1 - x2) / r;
+    jacobian_i_(1, 0) = (y1 - y2) / r;
+    jacobian_i_(2, 0) = (z1 - z2) / r;
+    jacobian_j_(0, 0) = (x2 - x1) / r;
+    jacobian_j_(1, 0) = (y2 - y1) / r;
+    jacobian_j_(2, 0) = (z2 - z1) / r;
+}
 
+
+// \brief: the UWB ranging model h(xi, xj)
+double ImuPlusRange::RangingModel() {
+    double sd1 = state_i(0, 0) - state_j_(0, 0);
+    double sd2 = state_i(1, 0) - state_j_(1, 0);
+    double sd3 = state_i(2, 0) - state_j_(2, 0);
+    return sqrt(sd1 * sd1 + sd2 * sd2 + sd3 * sd3);
+}
 
 
 

@@ -1,11 +1,14 @@
-//
-// Created by ubuntu-jianan
-//
+// Authors: jiananz1@uci.edu
 
+#include "common_include.h"
 #include "config.h"
-#include <mutex>
+
+namespace {
 
 mutex mu;
+
+} // namespace
+
 namespace cl {
 
 std::shared_ptr<Config> Config::config_ = nullptr;
@@ -18,7 +21,7 @@ void Config::SetParameterFile(const string & filename) {
         }
     }
 
-    config_->file_ = cv::FileStorage(filename.c_str(), cv::FileStorage::READ);
+    config_->file_.open(filename, cv::FileStorage::READ);
     if (config_->file_.isOpened() == false) {
         cerr << "Parameter file " << filename << " does not exist." << endl;
         config_->file_.release();

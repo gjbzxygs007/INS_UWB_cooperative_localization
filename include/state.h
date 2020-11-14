@@ -1,33 +1,40 @@
-#ifndef COOPERATIVE_STATE_H
-#define COOPERATIVE_STATE_H
+// Authors: jiananz1@uci.edu
+
+#pragma once
 
 #include "common_include.h"
 
 namespace cl {
-    enum StateType {
-        THREE_DIM,
-        NINE_DIM,
-    };
 
-    template <int D>
-    class StateVector {
-    public:
-        static const int dim_state = D;
-        typedef Eigen::Matrix<double, D, 1, Eigen::ColMajor> State;
-        typedef Eigen::Matrix<double, D, D, Eigen::ColMajor> Covariance;
-        typedef std::shared_ptr<StateVector<D>> Ptr;
+// Enumerator for different state dimension
+enum StateType {
+    kThreeDimension,
+    kNineDimension,
+};
 
-        StateVector() = default;
-        ~StateVector() = default;
+template <int D>
+class StateVector {
+public:
+    typedef Eigen::Matrix<double, D, 1, Eigen::ColMajor> State;
+    typedef Eigen::Matrix<double, D, D, Eigen::ColMajor> Covariance;
+    typedef std::shared_ptr<StateVector<D>> Ptr;
 
-        inline void setState (const State & s, const Covariance & c, const StateType & t) {_state = s; _cov = c; _type = t;}
-        inline State getState() {return _state; }
+    StateVector() = default;
+    ~StateVector() = default;
 
-    private:
-        State _state;
-        Covariance _cov;
-        StateType _type;
-    };
-}
+    inline void SetState (const State & s, const Covariance & c, const StateType & t) {
+        state_ = s; 
+        covariance_ = c; 
+        type_ = t;
+    }
 
-#endif //COOPERATIVE_STATE_H
+    State state() const {return state_; }
+
+private:
+    State state_;
+    Covariance covariance_;
+    StateType type_;
+};
+
+} // namespace cl
+

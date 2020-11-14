@@ -4,6 +4,7 @@
 test/CMakeFiles/run_cl.dir/run_cl.cpp.o
  ../include/common_include.h
  ../include/config.h
+ ../include/coop/cooperative.h
  ../include/coop/measurement_model.h
  ../include/coop/relative_measurement.h
  ../include/inertial/inertial_nav.h
