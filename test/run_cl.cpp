@@ -5,9 +5,10 @@
 #include <chrono>
 #include <thread>
 
-#include "coop/cooperative.h"
 #include "common_include.h"
 #include "config.h"
+#include "coop/connector.h"
+#include "coop/cooperative.h"
 #include "inertial/inertial_nav.h"
 #include "vn/compositedata.h"
 #include "vn/thread.h"
@@ -40,15 +41,15 @@ namespace {
 
 int main(int argc, char *argv[]) {
     if ( argc != 2 ) {
-        cout <<" Usage: run_cl parameter_file" << endl;
+        std::cout <<" Usage: run_cl parameter_file" << std::endl;
         return 1;
     }
 
-    string path = "./config/default.yaml";
-    cl::Config::SetParameterFile(path);
-    cv::FileStorage test = cv::FileStorage(path.c_str(), cv::FileStorage::READ);
+    cl::Config::SetParameterFile(argv[1]);
+	
 
-	cout << cl::Config::get<double>("variance_of_gyro") << endl;
+
+
     // cout << sensor_port << endl;
 	// const uint32_t SensorBaudrate = 115200;
 	

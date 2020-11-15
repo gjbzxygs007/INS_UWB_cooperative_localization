@@ -17,6 +17,8 @@ mutex
 -
 string
 -
+vector
+-
 cmath
 -
 Eigen/Core
@@ -29,6 +31,10 @@ opencv2/core/core.hpp
 ../include/config.h
 common_include.h
 ../include/common_include.h
+
+../include/coop/connector.h
+common_include.h
+../include/coop/common_include.h
 
 ../include/coop/cooperative.h
 common_include.h
@@ -219,12 +225,14 @@ chrono
 -
 thread
 -
-coop/cooperative.h
-/home/jianan/jianan/repos/INS_UWB_cooperative_localization/test/coop/cooperative.h
 common_include.h
 /home/jianan/jianan/repos/INS_UWB_cooperative_localization/test/common_include.h
 config.h
 /home/jianan/jianan/repos/INS_UWB_cooperative_localization/test/config.h
+coop/connector.h
+/home/jianan/jianan/repos/INS_UWB_cooperative_localization/test/coop/connector.h
+coop/cooperative.h
+/home/jianan/jianan/repos/INS_UWB_cooperative_localization/test/coop/cooperative.h
 inertial/inertial_nav.h
 /home/jianan/jianan/repos/INS_UWB_cooperative_localization/test/inertial/inertial_nav.h
 vn/compositedata.h

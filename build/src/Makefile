@@ -152,6 +152,33 @@ config.cpp.s:
 	cd /home/jianan/jianan/repos/INS_UWB_cooperative_localization/build && $(MAKE) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/config.cpp.s
 .PHONY : config.cpp.s
 
+connector.o: connector.cpp.o
+
+.PHONY : connector.o
+
+# target to build an object file
+connector.cpp.o:
+	cd /home/jianan/jianan/repos/INS_UWB_cooperative_localization/build && $(MAKE) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/connector.cpp.o
+.PHONY : connector.cpp.o
+
+connector.i: connector.cpp.i
+
+.PHONY : connector.i
+
+# target to preprocess a source file
+connector.cpp.i:
+	cd /home/jianan/jianan/repos/INS_UWB_cooperative_localization/build && $(MAKE) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/connector.cpp.i
+.PHONY : connector.cpp.i
+
+connector.s: connector.cpp.s
+
+.PHONY : connector.s
+
+# target to generate assembly for a file
+connector.cpp.s:
+	cd /home/jianan/jianan/repos/INS_UWB_cooperative_localization/build && $(MAKE) -f src/CMakeFiles/looselycl.dir/build.make src/CMakeFiles/looselycl.dir/connector.cpp.s
+.PHONY : connector.cpp.s
+
 inertial_nav.o: inertial_nav.cpp.o
 
 .PHONY : inertial_nav.o
@@ -218,6 +245,9 @@ help:
 	@echo "... config.o"
 	@echo "... config.i"
 	@echo "... config.s"
+	@echo "... connector.o"
+	@echo "... connector.i"
+	@echo "... connector.s"
 	@echo "... inertial_nav.o"
 	@echo "... inertial_nav.i"
 	@echo "... inertial_nav.s"

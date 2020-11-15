@@ -13,23 +13,21 @@
  * TODO: realize PECMV method
  */
 
-namespace cl {
-namespace coop {
+// namespace cl {
+// namespace coop {
 
-template <int D, int E>
-class Cooperative {
-public:
-    s
-    virtual Set
-    virtual Update
+// template <int D, int E>
+// class Cooperative {
+// public:
+    
 
-private:
-    ImuPlusRange::Ptr _state_update;
-    StateVector<D> _state;
-    RelMeasurement<
+// private:
+//     ImuPlusRange::Ptr _state_update;
+//     StateVector<D> _state;
+//     RelMeasurement<
 
-};
+// };
 
-} // namespace coop
-} // namespace cl
+// } // namespace coop
+// } // namespace cl
 
