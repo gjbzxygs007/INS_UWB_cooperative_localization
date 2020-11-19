@@ -2,9 +2,8 @@
 
 #pragma once
 
-#include <iostream>
 #include "coop/relative_measurement.h"
-#include "state.h"
+#include "common_include.h"
 
 
 namespace cl {
@@ -18,6 +17,7 @@ public:
     typedef MeasurementClass::Measurement Measurement;
     typedef Eigen::Matrix<double, 1, 9, Eigen::RowMajor> Jacobian;
     typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> MeasurementCovariance;
+    typedef std::shared_ptr<ImuPlusRange> Ptr;
 
     // Constructor and destructors
     ImuPlusRange();
