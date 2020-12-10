@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "coop/relative_measurement.h"
 #include "common_include.h"
-
+#include "coop/relative_measurement.h"
+#include "state.h"
 
 namespace cl {
 namespace coop {
@@ -13,7 +13,8 @@ namespace coop {
 class ImuPlusRange final {
 public:
     typedef RelativeMeasurement<1> MeasurementClass;
-    typedef StateVector<9>::State State;
+    typedef StateVector<9> StateClass;
+    typedef StateClass::State State;
     typedef MeasurementClass::Measurement Measurement;
     typedef Eigen::Matrix<double, 1, 9, Eigen::RowMajor> Jacobian;
     typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> MeasurementCovariance;

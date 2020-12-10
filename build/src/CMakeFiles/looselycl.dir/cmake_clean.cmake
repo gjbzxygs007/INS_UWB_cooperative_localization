@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "../../lib/liblooselycl.so"
   "CMakeFiles/looselycl.dir/config.cpp.o"
   "CMakeFiles/looselycl.dir/connector.cpp.o"
+  "CMakeFiles/looselycl.dir/cooperative.cpp.o"
   "CMakeFiles/looselycl.dir/inertial_nav.cpp.o"
   "CMakeFiles/looselycl.dir/measurement_model.cpp.o"
 )

@@ -4,9 +4,6 @@
 test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/common_include.h
 test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/config.h
 test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/coop/connector.h
-test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/coop/cooperative.h
-test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/coop/measurement_model.h
-test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/coop/relative_measurement.h
 test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/inertial/inertial_nav.h
 test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/state.h
 test/CMakeFiles/run_cl.dir/run_cl.cpp.o: ../include/vn/attitude.h
