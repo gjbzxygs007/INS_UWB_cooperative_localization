@@ -2,6 +2,9 @@
 
 #include "coop/cooperative.h"
 
+#include <string>
+#include <utility>
+
 #include <stdlib.h>
 
 #include "config.h"
@@ -12,8 +15,6 @@ namespace coop {
 CooperativeImu::CooperativeImu() {
     measurement_mode_ptr_ = std::make_shared<ImuPlusRange>();
     connector_ptr_ = std::make_shared<Connector>();
-    std::string path = Config::get<std::string>("uwb_path");
-    connector_ptr_->Initialize(path.c_str());
 
     // Read the MAC addresses of agents from the yaml file
     auto file_node_agent = Config::get<cv::FileNode>("addresses_of_agents");
@@ -43,7 +44,18 @@ CooperativeImu::CooperativeImu() {
         id++;
     }
 
-    
+    address_ = Config::get<std::string>("address");
+    auto itr = address_to_id_agent_.find(address_);
+    if (itr == address_to_id_agent_.end()) {
+        std::cerr << "The agent is not in the list of mac addresses";
+        exit(1);
+    }
+    id_ = itr->second;
+}
+
+void CooperativeImu::ConductCooperativeUpdate() {
+    Message msg(std::to_string(id_), );
+
 }
 
 

@@ -4,6 +4,8 @@
 
 #include <unordered_map>
 
+#include <boost/optional.hpp>
+
 #include "common_include.h"
 #include "coop/connector.h"
 #include "coop/measurement_model.h"
@@ -12,8 +14,8 @@
 /*
  * Define the class for cooperative localization
  * Cooperative is define as an ABC with interface implementation,
- * an implementation of DMV method has realized
- * TODO: realize PECMV method
+ * an implementation of DMV method has been finished
+ * TODO: PECMV method
  */
 
 namespace cl {
@@ -39,7 +41,7 @@ public:
 		measurement_ = measurement;
 	}
 
-	
+	void ConductCooperativeUpdate();
 
 
 	// Cooperative(Type s_a, 
@@ -68,8 +70,12 @@ private:
 	Connector::Ptr connector_ptr_;
 	Measurement measurement_;
 	State state_;
+	std::vector<double> state_vector_;
+	std::vector<double> covariance_vector_;
 	std::unordered_map<std::string, int> address_to_id_agent_;
 	std::unordered_map<std::string, int> address_to_id_beacon_;
+	std::string address_;
+	int id_;
 };
 
 } // namespace coop

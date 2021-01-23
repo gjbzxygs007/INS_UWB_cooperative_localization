@@ -12,6 +12,7 @@ zero_velocity_detector_threshold: 30000
 zero_velocity_detector_sigma: 0.1
 zero_velocity_update_variance: 0.001
 uwb_path: "/dev/ttyUSB0"
+address: "E29C"
 addresses_of_agents: 
     - "3B9C"
     - "E29C"
@@ -19,4 +20,3 @@ addresses_of_agents:
 addresses_of_beacons: 
     - "E62D"
     - "B57G"
-
